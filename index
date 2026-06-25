@@ -1,0 +1,1626 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Case Mind — Case 360</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/umd/lucide.min.js"></script>
+<style>
+:root {
+  --bg-deep:    #091617;
+  --bg-mid:     #0D2728;
+  --bg-card:    #0f3133;
+  --gold:       #C9A84C;
+  --gold-dim:   rgba(201,168,76,0.18);
+  --gold-glow:  rgba(201,168,76,0.08);
+  --text-main:  #FFFFFF;
+  --text-muted: #A8B2B3;
+  --text-dim:   #667a7b;
+  --red:        #e05252;
+  --orange:     #e07f30;
+  --green:      #3cb887;
+  --blue:       #4a8fe8;
+  --border:     rgba(201,168,76,0.2);
+  --glass:      rgba(13,39,40,0.7);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg-deep);color:var(--text-main);font-family:'Montserrat',sans-serif;font-size:14px;overflow:hidden}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(201,168,76,0.3);border-radius:3px}
+
+/* ── LAYOUT ────────────────────────────────────────── */
+.app{display:flex;height:100vh;width:100vw;overflow:hidden}
+
+/* ── SIDEBAR ──────────────────────────────────────── */
+.sidebar{
+  width:240px;flex-shrink:0;
+  background:var(--bg-mid);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  padding:0;
+  position:relative;
+  z-index:10;
+}
+.sidebar::after{
+  content:'';position:absolute;top:0;right:-1px;width:1px;height:100%;
+  background:linear-gradient(to bottom,transparent,var(--gold),transparent);
+  opacity:.4;
+}
+.sb-logo{
+  padding:28px 20px 20px;
+  border-bottom:1px solid var(--border);
+  cursor:default;
+}
+.sb-logo .brand{
+  font-family:'Cinzel',serif;
+  font-size:18px;font-weight:700;
+  color:var(--gold);
+  letter-spacing:.06em;
+  display:flex;align-items:center;gap:10px;
+}
+.sb-logo .brand svg{color:var(--gold)}
+.sb-logo .tagline{
+  font-size:9px;font-weight:500;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--text-dim);
+  margin-top:4px;padding-left:2px;
+}
+
+.sb-new-btn{
+  margin:16px 16px 12px;
+  background:linear-gradient(135deg,#b8912d,var(--gold));
+  color:#091617;
+  border:none;border-radius:8px;
+  padding:11px 14px;
+  font-family:'Montserrat',sans-serif;font-size:13px;font-weight:600;
+  cursor:pointer;display:flex;align-items:center;gap:8px;
+  box-shadow:0 0 18px rgba(201,168,76,0.35),0 2px 8px rgba(0,0,0,0.4);
+  transition:all .25s;letter-spacing:.02em;
+}
+.sb-new-btn:hover{
+  box-shadow:0 0 28px rgba(201,168,76,0.55),0 4px 12px rgba(0,0,0,0.4);
+  transform:translateY(-1px);
+}
+
+.sb-section-label{
+  font-size:9px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--text-dim);padding:14px 20px 6px;
+}
+
+.sb-nav{flex:1;overflow-y:auto}
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 20px;
+  color:var(--text-muted);font-size:13px;font-weight:400;
+  cursor:pointer;transition:all .2s;
+  border-left:3px solid transparent;
+  margin:1px 0;
+  border-radius:0 6px 6px 0;
+  margin-right:8px;
+}
+.nav-item:hover{background:var(--gold-glow);color:var(--text-main)}
+.nav-item.active{
+  background:var(--gold-dim);color:var(--gold);
+  border-left-color:var(--gold);font-weight:500;
+}
+.nav-item svg{width:15px;height:15px;flex-shrink:0}
+
+.sb-footer{
+  padding:16px 20px;
+  border-top:1px solid var(--border);
+  display:flex;align-items:center;gap:10px;
+}
+.sb-avatar{
+  width:34px;height:34px;border-radius:50%;
+  background:linear-gradient(135deg,#1a4a4c,#0f3133);
+  border:1.5px solid var(--gold);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cinzel',serif;font-size:13px;font-weight:600;color:var(--gold);
+  flex-shrink:0;
+}
+.sb-user-info .name{font-size:12px;font-weight:500;color:var(--text-main)}
+.sb-user-info .role{font-size:10px;color:var(--text-dim);margin-top:1px}
+
+/* ── MAIN ─────────────────────────────────────────── */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--bg-deep)}
+
+/* ── TOPBAR ─────────────────────────────────────────── */
+.topbar{
+  height:60px;flex-shrink:0;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 28px;
+  background:rgba(9,22,23,0.95);
+  backdrop-filter:blur(12px);
+}
+.topbar-left .greeting{font-family:'Cinzel',serif;font-size:15px;font-weight:600;color:var(--text-main)}
+.topbar-left .sub{font-size:11px;color:var(--text-dim);margin-top:2px}
+.topbar-right{display:flex;align-items:center;gap:14px}
+.topbar-badge{
+  position:relative;cursor:pointer;
+  width:34px;height:34px;border-radius:8px;
+  background:var(--bg-mid);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--text-muted);transition:all .2s;
+}
+.topbar-badge:hover{border-color:var(--gold);color:var(--gold)}
+.notif-dot{
+  position:absolute;top:6px;right:7px;
+  width:7px;height:7px;border-radius:50%;
+  background:var(--red);border:1.5px solid var(--bg-deep);
+}
+.topbar-date{font-size:12px;color:var(--text-dim)}
+
+/* ── VIEW CONTAINER ─────────────────────────────── */
+.view{display:none;flex:1;overflow-y:auto;padding:24px 28px;animation:fadeIn .3s ease}
+.view.active{display:flex;flex-direction:column;gap:20px}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* ── CARDS / GLASS ─────────────────────────────────── */
+.card{
+  background:var(--glass);
+  border:1px solid var(--border);
+  border-radius:12px;
+  backdrop-filter:blur(8px);
+  padding:20px;
+}
+.card-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:16px;
+}
+.card-title{
+  font-family:'Cinzel',serif;font-size:13px;font-weight:600;
+  color:var(--gold);letter-spacing:.04em;
+  display:flex;align-items:center;gap:8px;
+}
+.card-title svg{width:14px;height:14px}
+
+/* ── DASHBOARD ─────────────────────────────────────── */
+.dash-grid{display:grid;grid-template-columns:1fr 320px;gap:20px;align-items:start}
+
+.priority-feed{display:flex;flex-direction:column;gap:10px}
+.prio-card{
+  background:rgba(13,39,40,0.5);
+  border:1px solid rgba(201,168,76,0.15);
+  border-radius:10px;padding:14px 16px;
+  display:flex;align-items:flex-start;gap:12px;
+  cursor:pointer;transition:all .22s;
+  position:relative;overflow:hidden;
+}
+.prio-card::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  border-radius:3px 0 0 3px;
+}
+.prio-card.urgent::before{background:var(--red)}
+.prio-card.medium::before{background:var(--orange)}
+.prio-card.normal::before{background:var(--green)}
+.prio-card:hover{border-color:rgba(201,168,76,0.35);background:rgba(15,49,51,0.7);transform:translateX(3px)}
+.prio-icon{
+  width:36px;height:36px;border-radius:8px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:17px;
+}
+.prio-icon.urgent{background:rgba(224,82,82,0.15)}
+.prio-icon.medium{background:rgba(224,127,48,0.15)}
+.prio-icon.normal{background:rgba(60,184,135,0.12)}
+.prio-body{flex:1}
+.prio-tag{font-size:9px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px}
+.prio-tag.urgent{color:var(--red)}
+.prio-tag.medium{color:var(--orange)}
+.prio-tag.normal{color:var(--green)}
+.prio-title{font-size:13px;font-weight:500;color:var(--text-main);margin-bottom:4px}
+.prio-meta{font-size:11px;color:var(--text-dim)}
+.prio-time{
+  font-size:10px;font-weight:600;color:var(--red);
+  background:rgba(224,82,82,0.1);padding:3px 8px;border-radius:20px;
+  white-space:nowrap;flex-shrink:0;align-self:center;
+}
+
+/* météo sidebar */
+.meteo-wrap{display:flex;flex-direction:column;gap:14px}
+.meteo-stat{
+  background:rgba(13,39,40,0.5);border:1px solid var(--border);
+  border-radius:10px;padding:14px 16px;
+}
+.meteo-label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-dim);margin-bottom:8px}
+.meteo-value{font-family:'Cinzel',serif;font-size:26px;font-weight:600;color:var(--gold);line-height:1}
+.meteo-sub{font-size:11px;color:var(--text-muted);margin-top:4px}
+.bar-track{height:6px;background:rgba(255,255,255,0.08);border-radius:3px;margin-top:10px;overflow:hidden}
+.bar-fill{height:100%;border-radius:3px;transition:width 1s ease}
+
+.mini-chart{display:flex;align-items:flex-end;gap:4px;height:50px;margin-top:10px}
+.bar-col{
+  flex:1;border-radius:3px 3px 0 0;
+  background:linear-gradient(to top,var(--gold),rgba(201,168,76,0.3));
+  opacity:.75;transition:opacity .2s;cursor:pointer;
+}
+.bar-col:hover{opacity:1}
+
+.stat-row{display:flex;gap:10px;margin-top:4px}
+.stat-chip{
+  flex:1;background:rgba(13,39,40,0.6);
+  border:1px solid var(--border);border-radius:8px;
+  padding:10px 12px;text-align:center;
+}
+.stat-chip .val{font-family:'Cinzel',serif;font-size:20px;color:var(--gold)}
+.stat-chip .lbl{font-size:9px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.1em;margin-top:2px}
+
+/* ── INGESTION VIEW ─────────────────────────────────── */
+.ingest-layout{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+.dropzone{
+  border:2px dashed var(--gold);border-radius:14px;
+  padding:48px 32px;text-align:center;
+  background:var(--gold-glow);
+  cursor:pointer;transition:all .25s;
+  position:relative;overflow:hidden;
+}
+.dropzone::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at 50% 50%,rgba(201,168,76,0.06),transparent 70%);
+  pointer-events:none;
+}
+.dropzone:hover,.dropzone.drag-over{
+  border-color:#e0c068;background:rgba(201,168,76,0.1);
+  box-shadow:0 0 28px rgba(201,168,76,0.2);
+}
+.drop-icon{font-size:40px;margin-bottom:14px;display:block}
+.drop-title{font-family:'Cinzel',serif;font-size:16px;font-weight:600;color:var(--gold);margin-bottom:8px}
+.drop-sub{font-size:12px;color:var(--text-muted);line-height:1.6}
+.drop-types{
+  display:flex;gap:8px;justify-content:center;margin-top:18px;flex-wrap:wrap;
+}
+.file-tag{
+  font-size:10px;font-weight:600;letter-spacing:.08em;padding:4px 10px;
+  border-radius:20px;border:1px solid;
+}
+.file-tag.pdf{color:#e05252;border-color:rgba(224,82,82,0.4);background:rgba(224,82,82,0.08)}
+.file-tag.img{color:#4a8fe8;border-color:rgba(74,143,232,0.4);background:rgba(74,143,232,0.08)}
+.file-tag.aud{color:#3cb887;border-color:rgba(60,184,135,0.4);background:rgba(60,184,135,0.08)}
+
+.ai-progress-card{display:flex;flex-direction:column;gap:12px}
+.ai-header{
+  display:flex;align-items:center;gap:10px;
+  padding:12px 16px;
+  background:rgba(201,168,76,0.07);border:1px solid var(--border);border-radius:10px;
+}
+.ai-pulse{
+  width:10px;height:10px;border-radius:50%;background:var(--gold);flex-shrink:0;
+  animation:pulse 1.4s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(201,168,76,.6)}50%{box-shadow:0 0 0 6px rgba(201,168,76,0)}}
+.ai-header-text .label{font-size:12px;font-weight:600;color:var(--gold)}
+.ai-header-text .status{font-size:10px;color:var(--text-dim)}
+.prog-wrap{margin-top:4px}
+.prog-label{display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);margin-bottom:6px}
+.prog-track{height:5px;background:rgba(255,255,255,0.07);border-radius:3px;overflow:hidden}
+.prog-fill{
+  height:100%;
+  background:linear-gradient(90deg,#8b6420,var(--gold),#f0d080);
+  border-radius:3px;
+  animation:progAnim 3s ease forwards;
+}
+@keyframes progAnim{from{width:40%}to{width:65%}}
+
+.ai-task-list{display:flex;flex-direction:column;gap:8px}
+.ai-task{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 14px;border-radius:8px;
+  background:rgba(13,39,40,0.5);border:1px solid rgba(201,168,76,0.1);
+  font-size:12px;
+}
+.ai-task .task-icon{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ai-task.done .task-icon{background:rgba(60,184,135,0.15)}
+.ai-task.done .task-icon svg{color:var(--green)}
+.ai-task.active .task-icon{background:rgba(201,168,76,0.15)}
+.ai-task.active .task-icon svg{color:var(--gold)}
+.ai-task.wait .task-icon{background:rgba(255,255,255,0.05)}
+.ai-task.wait .task-icon svg{color:var(--text-dim)}
+.ai-task.done{color:var(--text-muted)}
+.ai-task.active{color:var(--text-main)}
+.ai-task.wait{color:var(--text-dim)}
+.task-spin{animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.file-preview{margin-top:8px;display:flex;flex-direction:column;gap:6px}
+.file-item{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 12px;border-radius:8px;
+  background:rgba(13,39,40,0.5);border:1px solid rgba(201,168,76,0.12);
+  font-size:12px;color:var(--text-muted);
+}
+.file-item svg{color:var(--gold);width:14px;height:14px;flex-shrink:0}
+.file-item .fname{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text-main)}
+.file-item .fsize{font-size:10px}
+
+/* ── CASE VIEW ────────────────────────────────────────── */
+.case-layout{display:flex;flex-direction:column;gap:20px}
+.timeline-wrap{position:relative}
+.timeline-track{
+  display:flex;align-items:center;
+  padding:20px 24px;gap:0;
+  background:var(--glass);border:1px solid var(--border);border-radius:12px;
+  overflow-x:auto;
+  scrollbar-width:thin;
+}
+.tl-line{flex:1;height:2px;background:rgba(201,168,76,0.2);min-width:32px}
+.tl-node{
+  display:flex;flex-direction:column;align-items:center;cursor:pointer;
+  position:relative;flex-shrink:0;
+}
+.tl-dot{
+  width:14px;height:14px;border-radius:50%;
+  border:2px solid;
+  background:var(--bg-deep);
+  transition:all .2s;position:relative;z-index:1;
+}
+.tl-node.done .tl-dot{border-color:var(--green);background:var(--green)}
+.tl-node.current .tl-dot{border-color:var(--gold);background:var(--gold);box-shadow:0 0 10px rgba(201,168,76,0.6)}
+.tl-node.alert .tl-dot{border-color:var(--red);background:var(--red);box-shadow:0 0 12px rgba(224,82,82,0.7);animation:alertPulse 1.5s infinite}
+@keyframes alertPulse{0%,100%{box-shadow:0 0 8px rgba(224,82,82,.7)}50%{box-shadow:0 0 16px rgba(224,82,82,1)}}
+.tl-node.future .tl-dot{border-color:var(--text-dim);background:transparent}
+.tl-label{
+  font-size:9px;text-align:center;max-width:80px;
+  margin-top:8px;line-height:1.4;font-weight:500;
+}
+.tl-node.done .tl-label{color:var(--text-muted)}
+.tl-node.current .tl-label{color:var(--gold)}
+.tl-node.alert .tl-label{color:var(--red);font-weight:600}
+.tl-node.future .tl-label{color:var(--text-dim)}
+.tl-date{font-size:8px;color:var(--text-dim);margin-top:2px}
+
+.case-body{display:grid;grid-template-columns:280px 1fr;gap:20px;align-items:start}
+
+.flash-ai{display:flex;flex-direction:column;gap:10px}
+.flash-section{
+  background:rgba(13,39,40,0.5);border:1px solid rgba(201,168,76,0.12);
+  border-radius:10px;padding:14px 16px;
+}
+.flash-section h4{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.flash-section h4 svg{width:12px;height:12px}
+.fact-item{display:flex;gap:8px;margin-bottom:8px;font-size:12px}
+.fact-item:last-child{margin-bottom:0}
+.fact-bullet{color:var(--gold);flex-shrink:0;margin-top:1px}
+.fact-text{color:var(--text-muted);line-height:1.5}
+.fact-text strong{color:var(--text-main)}
+
+.person-row{
+  display:flex;align-items:center;gap:8px;margin-bottom:8px;
+  padding:8px 10px;border-radius:7px;background:rgba(9,22,23,0.4);
+}
+.person-row:last-child{margin-bottom:0}
+.person-avatar{
+  width:28px;height:28px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cinzel',serif;font-size:11px;font-weight:600;
+}
+.person-name{font-size:12px;font-weight:500;color:var(--text-main)}
+.person-role{font-size:10px;color:var(--text-dim)}
+
+.doc-flow{display:flex;flex-direction:column;gap:10px}
+.doc-card{
+  background:rgba(13,39,40,0.45);border:1px solid rgba(201,168,76,0.13);
+  border-radius:10px;padding:14px 16px;cursor:pointer;transition:all .2s;
+}
+.doc-card:hover{border-color:rgba(201,168,76,0.35);background:rgba(15,49,51,0.55)}
+.doc-card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.doc-num{font-size:10px;letter-spacing:.1em;color:var(--text-dim)}
+.doc-badge{font-size:9px;font-weight:600;letter-spacing:.08em;padding:2px 8px;border-radius:20px}
+.doc-badge.complet{color:var(--green);background:rgba(60,184,135,0.12);border:1px solid rgba(60,184,135,0.3)}
+.doc-badge.alerte{color:var(--red);background:rgba(224,82,82,0.1);border:1px solid rgba(224,82,82,0.3)}
+.doc-badge.cours{color:var(--gold);background:var(--gold-dim);border:1px solid rgba(201,168,76,0.3)}
+.doc-title{font-size:13px;font-weight:500;color:var(--text-main);margin-bottom:4px}
+.doc-sub{font-size:11px;color:var(--text-muted)}
+
+/* ── CONTRADICTION MODAL ─────────────────────────────── */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(4,14,15,.8);
+  display:flex;align-items:center;justify-content:center;
+  z-index:1000;backdrop-filter:blur(6px);
+  opacity:0;pointer-events:none;transition:opacity .25s;
+}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{
+  width:min(820px,94vw);max-height:88vh;overflow-y:auto;
+  background:var(--bg-mid);border:1px solid var(--border);
+  border-radius:16px;padding:28px;
+  box-shadow:0 24px 80px rgba(0,0,0,.7),0 0 40px rgba(201,168,76,.12);
+  transform:scale(.96) translateY(10px);transition:transform .3s;
+}
+.modal-overlay.open .modal{transform:scale(1) translateY(0)}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.modal-title{font-family:'Cinzel',serif;font-size:16px;font-weight:600;color:var(--red)}
+.modal-close{
+  width:32px;height:32px;border-radius:8px;
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  color:var(--text-muted);transition:all .2s;
+}
+.modal-close:hover{background:rgba(255,255,255,.1);color:var(--text-main)}
+.contradiction-alert{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:12px 16px;border-radius:9px;
+  background:rgba(224,82,82,0.1);border:1px solid rgba(224,82,82,0.3);
+  margin-bottom:18px;font-size:12px;color:var(--text-main);line-height:1.6;
+}
+.contradiction-alert svg{color:var(--red);flex-shrink:0;margin-top:1px}
+.witness-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.witness-card{
+  background:rgba(9,22,23,0.5);border-radius:10px;
+  border:1px solid rgba(201,168,76,0.12);padding:16px;
+}
+.witness-name{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;font-weight:600}
+.witness-text{font-size:12px;color:var(--text-muted);line-height:1.7}
+.witness-text mark{
+  background:rgba(224,82,82,0.22);color:var(--red);
+  border-bottom:1px solid rgba(224,82,82,0.5);padding:0 2px;border-radius:2px;
+}
+.ai-verdict{
+  margin-top:16px;
+  padding:14px 16px;border-radius:9px;
+  background:rgba(201,168,76,0.07);border:1px solid rgba(201,168,76,0.2);
+  font-size:12px;color:var(--text-muted);line-height:1.6;
+}
+.ai-verdict .verdict-label{font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+
+/* ── SECTION HEADER ─────────────────────────────────── */
+.section-header{
+  display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;
+}
+.section-title{font-family:'Cinzel',serif;font-size:13px;font-weight:600;color:var(--gold);letter-spacing:.04em;display:flex;align-items:center;gap:8px}
+.section-title svg{width:14px;height:14px}
+.badge-count{
+  font-size:10px;font-weight:600;
+  padding:2px 8px;border-radius:20px;
+  background:rgba(224,82,82,0.15);color:var(--red);
+  border:1px solid rgba(224,82,82,0.3);
+}
+.btn-sm{
+  font-size:11px;font-weight:500;
+  padding:5px 12px;border-radius:6px;
+  border:1px solid var(--border);background:transparent;
+  color:var(--text-muted);cursor:pointer;transition:all .2s;
+  display:flex;align-items:center;gap:5px;font-family:'Montserrat',sans-serif;
+}
+.btn-sm:hover{border-color:var(--gold);color:var(--gold)}
+.btn-sm svg{width:12px;height:12px}
+
+/* ═══════════════════════════════════════════════════
+   RESPONSIVE — TABLET (≤900px) & MOBILE (≤600px)
+═══════════════════════════════════════════════════ */
+
+/* ── HAMBURGER BUTTON (hidden on desktop) ── */
+.mob-menu-btn{
+  display:none;
+  width:36px;height:36px;border-radius:8px;
+  background:var(--bg-mid);border:1px solid var(--border);
+  align-items:center;justify-content:center;
+  color:var(--text-muted);cursor:pointer;flex-shrink:0;
+  transition:all .2s;
+}
+.mob-menu-btn:hover{border-color:var(--gold);color:var(--gold)}
+
+/* ── MOBILE BOTTOM NAV ── */
+.mob-nav{
+  display:none;
+  position:fixed;bottom:0;left:0;right:0;
+  height:62px;
+  background:var(--bg-mid);
+  border-top:1px solid var(--border);
+  z-index:200;
+  flex-direction:row;
+  align-items:stretch;
+}
+.mob-nav-item{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:4px;cursor:pointer;color:var(--text-dim);font-size:9px;font-weight:500;
+  letter-spacing:.06em;text-transform:uppercase;transition:all .2s;
+  border-top:2px solid transparent;position:relative;
+}
+.mob-nav-item svg{width:18px;height:18px;flex-shrink:0}
+.mob-nav-item.active{color:var(--gold);border-top-color:var(--gold)}
+.mob-nav-badge{
+  position:absolute;top:8px;right:calc(50% - 14px);
+  background:var(--red);color:#fff;font-size:8px;font-weight:700;
+  width:16px;height:16px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  border:1.5px solid var(--bg-mid);
+}
+
+/* ── OVERLAY (sidebar backdrop on mobile) ── */
+.sidebar-overlay{
+  display:none;position:fixed;inset:0;
+  background:rgba(4,14,15,0.7);backdrop-filter:blur(4px);
+  z-index:149;
+}
+.sidebar-overlay.open{display:block}
+
+/* ══════════════════════════════
+   TABLET: 601px – 900px
+══════════════════════════════ */
+@media(max-width:900px){
+  html,body{overflow:hidden}
+
+  /* Sidebar slides in/out */
+  .sidebar{
+    position:fixed;left:-260px;top:0;bottom:0;
+    width:240px;z-index:150;
+    transition:left .3s cubic-bezier(.4,0,.2,1);
+    box-shadow:4px 0 32px rgba(0,0,0,.5);
+  }
+  .sidebar.open{left:0}
+
+  /* Show hamburger */
+  .mob-menu-btn{display:flex}
+
+  /* Topbar adjustments */
+  .topbar{padding:0 16px}
+  .topbar-date{display:none}
+  .topbar-left .greeting{font-size:13px}
+  .topbar-left .sub{font-size:10px;display:none}
+
+  /* Main takes full width */
+  .main{width:100vw}
+
+  /* Dashboard: single column */
+  .dash-grid{grid-template-columns:1fr}
+  .meteo-wrap{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+  /* Case: single column */
+  .case-body{grid-template-columns:1fr}
+  .flash-ai{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+  /* Ingest: single column */
+  .ingest-layout{grid-template-columns:1fr}
+
+  /* View padding */
+  .view{padding:16px}
+
+  /* Chat: contacts hidden by default, shown via toggle */
+  #view-chat{left:0;top:60px}
+  .cc{
+    position:fixed;left:-260px;top:60px;bottom:0;
+    width:250px;z-index:100;
+    transition:left .3s cubic-bezier(.4,0,.2,1);
+    box-shadow:4px 0 24px rgba(0,0,0,.5);
+  }
+  .cc.open{left:0}
+  .cw{width:100%}
+
+  /* Chat back button visible */
+  .chat-back-btn{display:flex!important}
+}
+
+/* ══════════════════════════════
+   MOBILE: ≤600px
+══════════════════════════════ */
+@media(max-width:600px){
+  html,body{overflow:hidden}
+
+  /* Hide desktop sidebar entirely, use bottom nav */
+  .sidebar{display:none!important}
+  .mob-nav{display:flex}
+
+  /* Main fills screen, bottom nav takes 62px */
+  .main{width:100vw}
+  .view{padding:12px 12px 74px}
+
+  /* Topbar */
+  .topbar{padding:0 12px;height:54px}
+  .topbar-left .greeting{font-size:13px}
+  .topbar-left .sub{display:none}
+  .topbar-date,.topbar-badge:last-child,.topbar-badge:nth-last-child(2){display:none}
+
+  /* Dashboard */
+  .dash-grid{grid-template-columns:1fr;gap:12px}
+  .meteo-wrap{display:none} /* hide stats sidebar on tiny screen */
+  .prio-card{padding:11px 12px;gap:8px}
+  .prio-icon{width:30px;height:30px;font-size:14px}
+  .prio-meta{display:none}
+  .prio-time{font-size:9px}
+
+  /* Case */
+  .case-body{grid-template-columns:1fr;gap:12px}
+  .flash-ai{display:flex;flex-direction:column;gap:10px}
+  .timeline-track{padding:14px 12px;gap:0}
+
+  /* Ingest */
+  .ingest-layout{grid-template-columns:1fr}
+  .dropzone{padding:28px 16px}
+  .witness-grid{grid-template-columns:1fr;gap:10px}
+
+  /* Chat — full screen, contacts as slide-in panel */
+  #view-chat{left:0;top:54px;bottom:62px}
+  .cc{
+    position:fixed;left:-100vw;top:54px;bottom:62px;
+    width:100vw;z-index:100;
+    transition:left .28s cubic-bezier(.4,0,.2,1);
+    box-shadow:none;
+  }
+  .cc.open{left:0}
+  .cw{width:100%}
+  .msgs{padding:14px 12px}
+  .cia{padding:10px 12px 14px}
+  .chat-back-btn{display:flex!important}
+
+  /* Bigger touch targets */
+  .nav-item{padding:12px 16px;min-height:44px}
+  .ci{padding:13px 14px;min-height:54px}
+}
+
+/* Chat back button (hidden on desktop) */
+.chat-back-btn{
+  display:none;
+  width:32px;height:32px;border-radius:7px;
+  background:rgba(255,255,255,0.04);border:1px solid var(--border);
+  align-items:center;justify-content:center;
+  color:var(--text-muted);cursor:pointer;transition:all .2s;flex-shrink:0;
+}
+.chat-back-btn:hover{border-color:var(--gold);color:var(--gold)}
+
+
+.text-dim{color:var(--text-dim)}
+.gold{color:var(--gold)}
+.gap-1{gap:4px}
+.flex{display:flex}
+.items-center{align-items:center}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ── SIDEBAR ───────────────────────────────────────── -->
+  <aside class="sidebar">
+    <div class="sb-logo">
+      <div class="brand">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3C7 3 3 7 3 12s4 9 9 9 9-4 9-9"/><path d="M8 12h8M12 8v8"/><path d="M19 5l-2-2-2 2 2 2z"/></svg>
+        CASE MIND
+      </div>
+      <div class="tagline">Case 360 — Interface Magistrat</div>
+    </div>
+
+    <button class="sb-new-btn" onclick="showView('ingest')">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+      Nouveau Dossier
+    </button>
+
+    <div class="sb-section-label">Navigation</div>
+
+    <nav class="sb-nav">
+      <div class="nav-item active" id="nav-dash" onclick="showView('dashboard')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Fil des Priorités
+      </div>
+      <div class="nav-item" id="nav-ingest" onclick="showView('ingest')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Ingestion IA
+      </div>
+      <div class="nav-item" id="nav-case" onclick="showView('case')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+        Affaire N°8492
+      </div>
+
+      <div class="nav-item" id="nav-chat" onclick="showView('chat')" style="position:relative">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        Espace Client
+        <span id="chat-badge" style="margin-left:auto;background:#e05252;color:#fff;font-size:9px;font-weight:700;padding:2px 6px;border-radius:20px">2</span>
+      </div>
+
+      <div class="sb-section-label" style="margin-top:8px">Dossiers récents</div>
+      <div class="nav-item">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Affaire N°7731
+      </div>
+      <div class="nav-item">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Affaire N°7689
+      </div>
+      <div class="nav-item">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Affaire N°7541
+      </div>
+    </nav>
+
+    <div class="sb-footer">
+      <div class="sb-avatar">PL</div>
+      <div class="sb-user-info">
+        <div class="name">Président Lecomte</div>
+        <div class="role">TGI Paris — 14ème Chambre</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── MAIN AREA ────────────────────────────────────── -->
+  <div class="main">
+
+    <!-- Topbar -->
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="mob-menu-btn" onclick="toggleSidebar()" title="Menu">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </div>
+        <div class="topbar-left">
+          <div class="greeting" id="topbar-title">Bienvenue, Président Lecomte</div>
+          <div class="sub" id="topbar-sub">Jeudi 26 Juin 2026 · Tribunal de Grande Instance de Paris</div>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <div class="topbar-date">08:47</div>
+        <div class="topbar-badge" title="Notifications">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+          <span class="notif-dot"></span>
+        </div>
+        <div class="topbar-badge" title="Calendrier">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </div>
+        <div class="topbar-badge" title="Paramètres">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── DASHBOARD VIEW ─────────────────────────────── -->
+    <div id="view-dashboard" class="view active">
+
+      <div class="section-header">
+        <div class="section-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          Fil des Priorités — IA Judiciaire
+        </div>
+        <span class="badge-count">3 alertes critiques</span>
+      </div>
+
+      <div class="dash-grid">
+
+        <!-- Feed left -->
+        <div>
+          <div class="priority-feed">
+
+            <div class="prio-card urgent" onclick="showView('case')">
+              <div class="prio-icon urgent">⚠️</div>
+              <div class="prio-body">
+                <div class="prio-tag urgent">CRITIQUE — DÉTENTION PROVISOIRE</div>
+                <div class="prio-title">Affaire N°8492 — Martin & Consorts</div>
+                <div class="prio-meta">Art. 144 CPP · Chambre de l'instruction · Contradiction détectée par IA sur dépositions</div>
+              </div>
+              <div class="prio-time">⏱ 48h restantes</div>
+            </div>
+
+            <div class="prio-card urgent">
+              <div class="prio-icon urgent">🔴</div>
+              <div class="prio-body">
+                <div class="prio-tag urgent">URGENT — PRESCRIPTION IMMINENTE</div>
+                <div class="prio-title">Affaire N°7731 — Succession Beaumont</div>
+                <div class="prio-meta">Art. 2224 CC · Délai de prescription à 72h · Actes interruptifs requis</div>
+              </div>
+              <div class="prio-time">⏱ 72h restantes</div>
+            </div>
+
+            <div class="prio-card medium">
+              <div class="prio-icon medium">📋</div>
+              <div class="prio-body">
+                <div class="prio-tag medium">MOYEN — EXPERTISE EN ATTENTE</div>
+                <div class="prio-title">Affaire N°7689 — SARL Nexon c/ Dupuis</div>
+                <div class="prio-meta">Expertise financière déposée · Délai de réponse des parties : 15 jours</div>
+              </div>
+              <div class="prio-time" style="color:var(--orange);background:rgba(224,127,48,0.1)">15j</div>
+            </div>
+
+            <div class="prio-card normal">
+              <div class="prio-icon normal">✅</div>
+              <div class="prio-body">
+                <div class="prio-tag normal">TRAITÉ — DOSSIER COMPLET</div>
+                <div class="prio-title">Affaire N°7541 — Dubois c/ Assurances Léon</div>
+                <div class="prio-meta">Décision rendue le 23/06/2026 · Voies de recours notifiées</div>
+              </div>
+              <div class="prio-time" style="color:var(--green);background:rgba(60,184,135,0.1)">Clôturé</div>
+            </div>
+
+            <div class="prio-card medium">
+              <div class="prio-icon medium">🔍</div>
+              <div class="prio-body">
+                <div class="prio-tag medium">ANALYSE — ANTÉCÉDENTS DÉTECTÉS</div>
+                <div class="prio-title">Affaire N°8501 — Individu X — Récidive</div>
+                <div class="prio-meta">IA Case Mind : 3 procédures antérieures liées · Profil récidiviste identifié</div>
+              </div>
+              <div class="prio-time" style="color:var(--orange);background:rgba(224,127,48,0.1)">Revue</div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Weather sidebar right -->
+        <div class="meteo-wrap">
+
+          <div class="card" style="padding:16px">
+            <div class="card-header" style="margin-bottom:12px">
+              <div class="card-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                Météo du Tribunal
+              </div>
+            </div>
+            <div class="stat-row">
+              <div class="stat-chip">
+                <div class="val">23</div>
+                <div class="lbl">Dossiers traités aujourd'hui</div>
+              </div>
+              <div class="stat-chip">
+                <div class="val" style="color:var(--red)">7</div>
+                <div class="lbl">En attente urgente</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="meteo-stat">
+            <div class="meteo-label">Charge audience — 14ème Ch.</div>
+            <div class="meteo-value">78<span style="font-size:14px;color:var(--text-dim)">%</span></div>
+            <div class="meteo-sub">Capacité maximale : 32 affaires/semaine</div>
+            <div class="bar-track"><div class="bar-fill" style="width:78%;background:linear-gradient(90deg,var(--gold),#e0a830)"></div></div>
+          </div>
+
+          <div class="card" style="padding:16px">
+            <div class="card-title" style="margin-bottom:12px">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              Dossiers / Semaine
+            </div>
+            <div class="mini-chart">
+              <div class="bar-col" style="height:45%"></div>
+              <div class="bar-col" style="height:65%"></div>
+              <div class="bar-col" style="height:55%"></div>
+              <div class="bar-col" style="height:80%"></div>
+              <div class="bar-col" style="height:70%"></div>
+              <div class="bar-col" style="height:90%;opacity:1"></div>
+              <div class="bar-col" style="height:35%;opacity:0.4"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:9px;color:var(--text-dim)">
+              <span>Lun</span><span>Mar</span><span>Mer</span><span>Jeu</span><span>Ven</span><span>Auj</span><span>Dim</span>
+            </div>
+          </div>
+
+          <div class="meteo-stat">
+            <div class="meteo-label">IA — Taux d'analyse complète</div>
+            <div class="meteo-value">94<span style="font-size:14px;color:var(--text-dim)">%</span></div>
+            <div class="meteo-sub">47 dossiers analysés sur 50 actifs</div>
+            <div class="bar-track"><div class="bar-fill" style="width:94%;background:linear-gradient(90deg,var(--green),#5ed4a0)"></div></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ── INGESTION VIEW ─────────────────────────────── -->
+    <div id="view-ingest" class="view">
+
+      <div class="section-header">
+        <div class="section-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Ingestion Intelligente — Nouveau Dossier
+        </div>
+        <button class="btn-sm">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          Saisie manuelle
+        </button>
+      </div>
+
+      <div class="ingest-layout">
+
+        <!-- Drop zone + preview -->
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div class="dropzone" id="dropzone" ondragover="event.preventDefault();this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="handleDrop(event)">
+            <span class="drop-icon">📂</span>
+            <div class="drop-title">Glissez-déposez les pièces du dossier</div>
+            <div class="drop-sub">PDF, documents scannés, fichiers audio, images…<br>L'IA analyse automatiquement chaque pièce versée.</div>
+            <div class="drop-types">
+              <span class="file-tag pdf">PDF</span>
+              <span class="file-tag img">SCAN / JPEG</span>
+              <span class="file-tag aud">MP3 / WAV</span>
+              <span class="file-tag img">DOCX</span>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Pièces chargées
+              </div>
+              <span style="font-size:11px;color:var(--text-dim)">3 fichiers</span>
+            </div>
+            <div class="file-preview">
+              <div class="file-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <span class="fname">PV_Audition_Martin_22062026.pdf</span>
+                <span class="fsize">2.4 Mo</span>
+              </div>
+              <div class="file-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <span class="fname">Rapport_Expertise_Financiere.pdf</span>
+                <span class="fsize">8.1 Mo</span>
+              </div>
+              <div class="file-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <span class="fname">Enregistrement_Audience_15062026.mp3</span>
+                <span class="fsize">47.3 Mo</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI progress right -->
+        <div class="ai-progress-card">
+
+          <div class="ai-header">
+            <div class="ai-pulse"></div>
+            <div class="ai-header-text">
+              <div class="label">Moteur IA — Analyse en cours</div>
+              <div class="status">Affaire N°8492 · Initiée le 26/06/2026 à 08:32</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title" style="margin-bottom:12px">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              Analyse globale — 65%
+            </div>
+            <div class="prog-wrap">
+              <div class="prog-label"><span>Extraction des entités nommées</span><span class="gold">65%</span></div>
+              <div class="prog-track"><div class="prog-fill"></div></div>
+            </div>
+            <div style="font-size:11px;color:var(--text-dim);margin-top:10px">Temps estimé restant : ~8 minutes · 3 fichiers en cours de traitement</div>
+          </div>
+
+          <div class="card">
+            <div class="card-title" style="margin-bottom:14px">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+              Tâches IA en cours
+            </div>
+            <div class="ai-task-list">
+              <div class="ai-task done">
+                <div class="task-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div>
+                <span>Nomenclature automatique des pièces</span>
+              </div>
+              <div class="ai-task done">
+                <div class="task-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div>
+                <span>OCR et numérisation intégrale</span>
+              </div>
+              <div class="ai-task done">
+                <div class="task-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div>
+                <span>Détection des antécédents judiciaires</span>
+              </div>
+              <div class="ai-task active">
+                <div class="task-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="task-spin"><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0"/></svg></div>
+                <span>Extraction des entités nommées (personnes, dates, lieux)</span>
+              </div>
+              <div class="ai-task active">
+                <div class="task-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="task-spin"><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0"/></svg></div>
+                <span>Analyse des contradictions inter-dépositions</span>
+              </div>
+              <div class="ai-task wait">
+                <div class="task-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+                <span>Classification par priorité légale</span>
+              </div>
+              <div class="ai-task wait">
+                <div class="task-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+                <span>Résumé Flash IA (500 pages → fiche)</span>
+              </div>
+              <div class="ai-task wait">
+                <div class="task-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+                <span>Génération de la Timeline interactive 360°</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="background:rgba(201,168,76,0.05)">
+            <div style="font-size:11px;color:var(--text-muted);line-height:1.6;display:flex;gap:10px;align-items:flex-start">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.8" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              <span>L'IA Case Mind analyse les dépositions en temps réel. En cas de contradiction, une alerte sera générée automatiquement avant la clôture de l'analyse.</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ── CASE 360 VIEW ──────────────────────────────── -->
+    <div id="view-case" class="view">
+
+      <div class="section-header">
+        <div class="section-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Affaire N°8492 — Case 360 · Martin & Consorts
+        </div>
+        <div style="display:flex;gap:8px">
+          <span style="font-size:11px;color:var(--red);background:rgba(224,82,82,0.1);border:1px solid rgba(224,82,82,0.3);padding:4px 12px;border-radius:20px;font-weight:600">⚠ Détention provisoire</span>
+          <button class="btn-sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Exporter</button>
+        </div>
+      </div>
+
+      <!-- Timeline -->
+      <div class="timeline-wrap">
+        <div class="card" style="padding:0">
+          <div style="padding:14px 20px 8px;border-bottom:1px solid var(--border)">
+            <div class="card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+              Timeline Interactive — Parcours Procédural
+            </div>
+          </div>
+          <div class="timeline-track">
+
+            <div class="tl-node done">
+              <div class="tl-dot"></div>
+              <div class="tl-label">Faits commis</div>
+              <div class="tl-date">12/01/2026</div>
+            </div>
+            <div class="tl-line"></div>
+
+            <div class="tl-node done">
+              <div class="tl-dot"></div>
+              <div class="tl-label">Plainte déposée</div>
+              <div class="tl-date">15/01/2026</div>
+            </div>
+            <div class="tl-line"></div>
+
+            <div class="tl-node done">
+              <div class="tl-dot"></div>
+              <div class="tl-label">Ouverture instruction</div>
+              <div class="tl-date">22/01/2026</div>
+            </div>
+            <div class="tl-line"></div>
+
+            <div class="tl-node done">
+              <div class="tl-dot"></div>
+              <div class="tl-label">Mise en examen</div>
+              <div class="tl-date">05/02/2026</div>
+            </div>
+            <div class="tl-line"></div>
+
+            <div class="tl-node done">
+              <div class="tl-dot"></div>
+              <div class="tl-label">Détention provisoire ordonnée</div>
+              <div class="tl-date">06/02/2026</div>
+            </div>
+            <div class="tl-line"></div>
+
+            <div class="tl-node done">
+              <div class="tl-dot"></div>
+              <div class="tl-label">Expertise ordonnée</div>
+              <div class="tl-date">14/03/2026</div>
+            </div>
+            <div class="tl-line"></div>
+
+            <!-- ALERT NODE -->
+            <div class="tl-node alert" onclick="openModal()" title="Cliquer pour voir la contradiction">
+              <div class="tl-dot"></div>
+              <div class="tl-label">⚠ Contradiction<br>détectée</div>
+              <div class="tl-date">22/06/2026</div>
+            </div>
+            <div class="tl-line" style="background:rgba(224,82,82,0.4)"></div>
+
+            <div class="tl-node current">
+              <div class="tl-dot"></div>
+              <div class="tl-label">Aujourd'hui</div>
+              <div class="tl-date">26/06/2026</div>
+            </div>
+            <div class="tl-line"></div>
+
+            <div class="tl-node future">
+              <div class="tl-dot"></div>
+              <div class="tl-label">Clôture instruction</div>
+              <div class="tl-date">~Août 2026</div>
+            </div>
+            <div class="tl-line"></div>
+
+            <div class="tl-node future">
+              <div class="tl-dot"></div>
+              <div class="tl-label">Renvoi en jugement</div>
+              <div class="tl-date">~Oct 2026</div>
+            </div>
+            <div class="tl-line"></div>
+
+            <div class="tl-node future">
+              <div class="tl-dot"></div>
+              <div class="tl-label">Audience de jugement</div>
+              <div class="tl-date">~Déc 2026</div>
+            </div>
+
+          </div>
+          <div style="padding:10px 20px;border-top:1px solid var(--border);font-size:10px;color:var(--text-dim);display:flex;align-items:center;gap:6px">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            Cliquez sur le nœud rouge ⚠ pour afficher l'analyse de contradiction IA
+          </div>
+        </div>
+      </div>
+
+      <!-- Case body -->
+      <div class="case-body">
+
+        <!-- Flash AI left -->
+        <div class="flash-ai">
+          <div class="flash-section">
+            <h4>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              Résumé Flash IA
+            </h4>
+            <div style="font-size:10px;color:var(--text-dim);margin-bottom:10px">500 pages analysées en 20 min</div>
+            <div class="fact-item"><span class="fact-bullet">▸</span><span class="fact-text"><strong>Infraction :</strong> Escroquerie en bande organisée (Art. 313-2 CP) et abus de confiance (Art. 314-1 CP)</span></div>
+            <div class="fact-item"><span class="fact-bullet">▸</span><span class="fact-text"><strong>Préjudice :</strong> 2,3 M€ au détriment de 14 victimes identifiées</span></div>
+            <div class="fact-item"><span class="fact-bullet">▸</span><span class="fact-text"><strong>Période :</strong> Janvier 2024 – Janvier 2026 (24 mois d'activité délictuelle)</span></div>
+            <div class="fact-item"><span class="fact-bullet">▸</span><span class="fact-text"><strong>Détention :</strong> Risque de fuite élevé · Délai légal : <strong style="color:var(--red)">28 juin 2026</strong></span></div>
+          </div>
+
+          <div class="flash-section">
+            <h4>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+              Articles applicables
+            </h4>
+            <div class="fact-item"><span class="fact-bullet">▸</span><span class="fact-text"><strong>Art. 313-2 CP</strong> — Escroquerie aggravée · 7 ans / 750K€</span></div>
+            <div class="fact-item"><span class="fact-bullet">▸</span><span class="fact-text"><strong>Art. 314-1 CP</strong> — Abus de confiance · 3 ans / 375K€</span></div>
+            <div class="fact-item"><span class="fact-bullet">▸</span><span class="fact-text"><strong>Art. 144 CPP</strong> — Détention provisoire · Conditions de maintien à revoir</span></div>
+            <div class="fact-item"><span class="fact-bullet">▸</span><span class="fact-text"><strong>Art. 450-1 CP</strong> — Association de malfaiteurs · Qualification à consolider</span></div>
+          </div>
+
+          <div class="flash-section">
+            <h4>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+              Parties impliquées
+            </h4>
+            <div class="person-row">
+              <div class="person-avatar" style="background:rgba(224,82,82,0.15);color:var(--red)">JM</div>
+              <div><div class="person-name">Jean-Paul Martin</div><div class="person-role">Mis en examen principal · En détention</div></div>
+            </div>
+            <div class="person-row">
+              <div class="person-avatar" style="background:rgba(224,82,82,0.12);color:#e07f7f">CC</div>
+              <div><div class="person-name">Claire Consort</div><div class="person-role">Complice présumée · Sous contrôle judiciaire</div></div>
+            </div>
+            <div class="person-row">
+              <div class="person-avatar" style="background:rgba(74,143,232,0.12);color:var(--blue)">ML</div>
+              <div><div class="person-name">Maître Laurent</div><div class="person-role">Défenseur — Barreau de Paris</div></div>
+            </div>
+            <div class="person-row">
+              <div class="person-avatar" style="background:rgba(60,184,135,0.12);color:var(--green)">PF</div>
+              <div><div class="person-name">Parquet — Procureur Fontaine</div><div class="person-role">Ministère Public · TGI Paris</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Doc flow center -->
+        <div class="doc-flow">
+
+          <div class="section-header">
+            <div style="font-size:12px;font-weight:500;color:var(--text-muted)">Flux documentaire — 12 pièces</div>
+            <button class="btn-sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>Tout afficher</button>
+          </div>
+
+          <div class="doc-card" onclick="openModal()">
+            <div class="doc-card-head">
+              <span class="doc-num">PIÈCE N°04</span>
+              <span class="doc-badge alerte">⚠ CONTRADICTION IA</span>
+            </div>
+            <div class="doc-title">Dépositions témoins — Comparaison IA</div>
+            <div class="doc-sub">Incohérence critique détectée entre déclaration Témoin A (22/06) et Témoin B (15/05) — Cliquer pour analyser</div>
+          </div>
+
+          <div class="doc-card">
+            <div class="doc-card-head">
+              <span class="doc-num">PIÈCE N°01</span>
+              <span class="doc-badge complet">COMPLET</span>
+            </div>
+            <div class="doc-title">Procès-verbal de placement en garde à vue</div>
+            <div class="doc-sub">OPJ Commissariat 8ème · 06/02/2026 · 14h32 — 47 pages</div>
+          </div>
+
+          <div class="doc-card">
+            <div class="doc-card-head">
+              <span class="doc-num">PIÈCE N°02</span>
+              <span class="doc-badge complet">COMPLET</span>
+            </div>
+            <div class="doc-title">Ordonnance de placement en détention provisoire</div>
+            <div class="doc-sub">Juge des libertés — 06/02/2026 · Art. 144 CPP</div>
+          </div>
+
+          <div class="doc-card">
+            <div class="doc-card-head">
+              <span class="doc-num">PIÈCE N°05</span>
+              <span class="doc-badge cours">EN COURS</span>
+            </div>
+            <div class="doc-title">Rapport d'expertise financière — Cabinet Moreau</div>
+            <div class="doc-sub">Désigné le 14/03/2026 · Délai de dépôt : 30/06/2026 — 312 pages analysées</div>
+          </div>
+
+          <div class="doc-card">
+            <div class="doc-card-head">
+              <span class="doc-num">PIÈCE N°06</span>
+              <span class="doc-badge complet">COMPLET</span>
+            </div>
+            <div class="doc-title">Réquisitoire introductif du Parquet</div>
+            <div class="doc-sub">Procureur Fontaine — 22/01/2026 · Qualification triple retenue</div>
+          </div>
+
+          <div class="doc-card">
+            <div class="doc-card-head">
+              <span class="doc-num">PIÈCE N°09</span>
+              <span class="doc-badge cours">EN COURS</span>
+            </div>
+            <div class="doc-title">Demande de mise en liberté — Défense</div>
+            <div class="doc-sub">Maître Laurent · Déposée le 24/06/2026 · Délai de réponse : 48h</div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /app -->
+
+
+<!-- ── CONTRADICTION MODAL ─────────────────────────────── -->
+<div class="modal-overlay" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">
+        ⚠ Contradiction détectée — Analyse IA
+      </div>
+      <div class="modal-close" onclick="closeModal()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </div>
+    </div>
+
+    <div class="contradiction-alert">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <span>L'IA Case Mind a identifié une incohérence significative entre deux dépositions concernant <strong>l'heure et le lieu de la remise des fonds</strong>. Cette contradiction est susceptible d'affecter la qualification pénale retenue et la crédibilité des témoins.</span>
+    </div>
+
+    <div class="witness-grid">
+      <div class="witness-card">
+        <div class="witness-name">📋 Témoin A — Sophie Renard</div>
+        <div style="font-size:10px;color:var(--text-dim);margin-bottom:10px">Déposition du 22/06/2026 · 09h15</div>
+        <div class="witness-text">
+          «&nbsp;Je confirme que la remise des fonds a eu lieu <mark>le 15 janvier 2026, vers 14h00</mark>, dans le hall de <mark>l'immeuble sis au 42 rue de Rivoli, Paris 1er</mark>. J'étais présente avec M. Martin. Il a récupéré une enveloppe contenant environ <mark>50 000 euros en espèces</mark>. La transaction a duré moins de dix minutes.&nbsp;»
+        </div>
+      </div>
+      <div class="witness-card">
+        <div class="witness-name">📋 Témoin B — Marc Dupuis</div>
+        <div style="font-size:10px;color:var(--text-dim);margin-bottom:10px">Déposition du 15/05/2026 · 15h40</div>
+        <div class="witness-text">
+          «&nbsp;À ma connaissance, la remise des fonds s'est faite <mark>le 18 janvier 2026, en soirée vers 19h30</mark>, dans le restaurant <mark>Le Procope, rue de l'Ancienne Comédie, Paris 6ème</mark>. Je n'étais pas présent mais on m'a remis <mark>30 000 euros</mark> par virement le lendemain matin.&nbsp;»
+        </div>
+      </div>
+    </div>
+
+    <div class="ai-verdict">
+      <div class="verdict-label">🤖 Analyse IA — Recommandation magistrat</div>
+      L'IA Case Mind identifie <strong>3 contradictions majeures</strong> entre ces deux déclarations : (1) la date diverge de 3 jours, (2) le lieu est radicalement différent (Paris 1er vs Paris 6ème), (3) le montant diffère de 20 000€. <br><br>
+      <strong>Recommandation :</strong> Il est conseillé de convoquer les deux témoins pour confrontation directe (Art. 102 CPP) avant toute décision sur la demande de mise en liberté. La crédibilité de la charge reposant partiellement sur ces dépositions, leur incohérence pourrait fragiliser la qualification d'escroquerie en bande organisée.
+    </div>
+
+  </div>
+</div>
+
+<script>
+function showView(name){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  // chat view is NOT a .view — handle separately
+  var chatEl = document.getElementById('view-chat');
+  chatEl.style.display = 'none';
+  if(name === 'chat'){
+    chatEl.style.display = 'flex';
+    document.getElementById('nav-chat').classList.add('active');
+    var badge = document.getElementById('chat-badge');
+    if(badge) badge.style.display='none';
+    setTimeout(function(){var m=document.getElementById('chat-messages');if(m)m.scrollTop=m.scrollHeight;},60);
+  } else {
+    var el = document.getElementById('view-'+name);
+    if(el) el.classList.add('active');
+    var navEl = document.getElementById('nav-'+name);
+    if(navEl) navEl.classList.add('active');
+  }
+  var titles={dashboard:'Bienvenue, Président Lecomte',ingest:'Ingestion Intelligente — Nouveau Dossier',case:'Affaire N°8492 — Case 360',chat:'Espace Client — Messagerie Sécurisée'};
+  var subs={dashboard:'Jeudi 26 Juin 2026 · Tribunal de Grande Instance de Paris',ingest:'Analyse IA en cours · 3 fichiers chargés',case:'Martin & Consorts · Détention provisoire · 48h restantes',chat:'2 messages non lus · Maître Laurent en ligne'};
+  document.getElementById('topbar-title').textContent=titles[name]||'';
+  document.getElementById('topbar-sub').textContent=subs[name]||'';
+}
+
+function openModal(){document.getElementById('modal').classList.add('open');document.body.style.overflow='hidden';}
+function closeModal(){document.getElementById('modal').classList.remove('open');document.body.style.overflow='';}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+function handleDrop(e){e.preventDefault();document.getElementById('dropzone').classList.remove('drag-over');}
+window.addEventListener('load',()=>{
+  document.querySelectorAll('.bar-fill').forEach(b=>{const w=b.style.width;b.style.width='0';setTimeout(()=>{b.style.transition='width 1.2s ease';b.style.width=w;},200);});
+  // init chat hidden
+  document.getElementById('view-chat').style.display='none';
+});
+
+// ── MOBILE / TABLET NAV ──
+function toggleSidebar(){
+  var sb=document.querySelector('.sidebar');
+  var ov=document.getElementById('sidebar-overlay');
+  sb.classList.toggle('open');
+  ov.classList.toggle('open');
+}
+function closeSidebar(){
+  document.querySelector('.sidebar').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('open');
+}
+function setMobNav(name){
+  document.querySelectorAll('.mob-nav-item').forEach(function(el){el.classList.remove('active')});
+  var el=document.getElementById('mob-nav-'+name);
+  if(el) el.classList.add('active');
+  if(name==='chat'){
+    var b=document.getElementById('mob-badge');
+    if(b) b.style.display='none';
+  }
+}
+function openChatContacts(){
+  document.querySelector('.cc').classList.toggle('open');
+}
+// close contacts when a contact is picked on mobile
+var _origSelectContact = typeof selectContact === 'function' ? selectContact : null;
+function selectContact(el,init){
+  document.querySelectorAll('.ci').forEach(function(c){c.classList.remove('ci-active')});
+  el.classList.add('ci-active');
+  var d=contacts[init];
+  var ha=document.getElementById('cha');
+  ha.textContent=init; ha.style.background=d.bg; ha.style.color=d.col; ha.style.borderColor=d.border;
+  document.getElementById('chn').textContent=d.name;
+  document.getElementById('chr').textContent=d.role;
+  document.getElementById('chat-textarea').placeholder='Répondre à '+d.name+'…';
+  var u=el.querySelector('.cu');if(u)u.remove();
+  // close contacts panel on mobile
+  document.querySelector('.cc').classList.remove('open');
+}
+
+// Override showView to also close sidebar on mobile
+var _origShowView = showView;
+showView = function(name){
+  _origShowView(name);
+  closeSidebar();
+};
+var contacts={
+  ML:{name:'Maître Laurent',role:'Avocat de la défense · Barreau de Paris · En ligne',col:'#4a8fe8',bg:'rgba(74,143,232,0.15)',border:'rgba(74,143,232,0.3)'},
+  JM:{name:'Jean-Paul Martin',role:'Mis en examen · Communication via défenseur',col:'#e05252',bg:'rgba(224,82,82,0.12)',border:'rgba(224,82,82,0.3)'},
+  PF:{name:'Procureur Fontaine',role:'Ministère Public · TGI Paris · En ligne',col:'#3cb887',bg:'rgba(60,184,135,0.12)',border:'rgba(60,184,135,0.3)'},
+  CC:{name:'Claire Consort',role:'Sous contrôle judiciaire · Accès restreint',col:'#e07f30',bg:'rgba(224,127,48,0.12)',border:'rgba(224,127,48,0.3)'}
+};
+function selectContact(el,init){
+  document.querySelectorAll('.ci').forEach(c=>c.classList.remove('ci-active'));
+  el.classList.add('ci-active');
+  var d=contacts[init];
+  var ha=document.getElementById('cha');
+  ha.textContent=init; ha.style.background=d.bg; ha.style.color=d.col; ha.style.borderColor=d.border;
+  document.getElementById('chn').textContent=d.name;
+  document.getElementById('chr').textContent=d.role;
+  document.getElementById('chat-textarea').placeholder='Répondre à '+d.name+'…';
+  var u=el.querySelector('.cu');if(u)u.remove();
+}
+function sendMsg(){
+  var ta=document.getElementById('chat-textarea');
+  var txt=ta.value.trim();if(!txt)return;
+  var msgs=document.getElementById('chat-messages');
+  var now=new Date();
+  var t=now.getHours().toString().padStart(2,'0')+'h'+now.getMinutes().toString().padStart(2,'0');
+  var d=document.createElement('div');
+  d.style.cssText='display:flex;flex-direction:row-reverse;align-items:flex-end;gap:10px;align-self:flex-end;max-width:62%';
+  d.innerHTML='<div style="width:32px;height:32px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:Cinzel,serif;font-size:11px;font-weight:600;background:rgba(201,168,76,0.15);color:#C9A84C">PL</div>'
+    +'<div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px">'
+    +'<div style="font-size:10px;color:#667a7b;text-align:right;padding:0 4px">Président Lecomte</div>'
+    +'<div style="padding:12px 16px;font-size:13px;line-height:1.65;color:#fff;background:linear-gradient(135deg,rgba(180,130,40,0.22),rgba(201,168,76,0.16));border:1px solid rgba(201,168,76,0.28);border-radius:16px 4px 16px 16px;word-break:break-word">'+txt.replace(/\n/g,'<br>')+'</div>'
+    +'<div style="font-size:10px;color:#667a7b;text-align:right;padding:0 4px">'+t+'</div></div>';
+  msgs.appendChild(d);
+  ta.value='';ta.style.height='auto';
+  msgs.scrollTop=msgs.scrollHeight;
+  // auto-reply
+  var ac=document.querySelector('.ci.ci-active');
+  var init=ac?ac.dataset.init:'ML';
+  var cd=contacts[init]||contacts.ML;
+  var replies=['Bien reçu, Monsieur le Président. Nous nous conformerons à vos instructions.','Merci pour votre réponse rapide. Nous préparons les documents requis.','Compris. Nous serons présents à l\'audience. Merci de votre diligence.','Je vous remercie. Nous transmettons les éléments au greffe sans délai.'];
+  setTimeout(function(){
+    var r=replies[Math.floor(Math.random()*replies.length)];
+    var rd=document.createElement('div');
+    rd.style.cssText='display:flex;align-items:flex-end;gap:10px;align-self:flex-start;max-width:62%';
+    rd.innerHTML='<div style="width:32px;height:32px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:Cinzel,serif;font-size:11px;font-weight:600;background:'+cd.bg+';color:'+cd.col+';border:1.5px solid '+cd.border+'">'+init+'</div>'
+      +'<div style="display:flex;flex-direction:column;gap:3px">'
+      +'<div style="font-size:10px;color:#667a7b;padding:0 4px">'+cd.name+'</div>'
+      +'<div style="padding:12px 16px;font-size:13px;line-height:1.65;color:#fff;background:rgba(13,45,47,0.9);border:1px solid rgba(201,168,76,0.13);border-radius:4px 16px 16px 16px;word-break:break-word">'+r+'</div>'
+      +'<div style="font-size:10px;color:#667a7b;padding:0 4px">'+t+'</div></div>';
+    msgs.appendChild(rd);
+    msgs.scrollTop=msgs.scrollHeight;
+  },1800);
+}
+function chatKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg();}}
+function chatResize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,120)+'px';}
+</script>
+
+<style>
+#view-chat{position:absolute;top:60px;left:240px;right:0;bottom:0;display:none;flex-direction:row;background:#091617;z-index:5;}
+.cc{width:250px;flex-shrink:0;border-right:1px solid rgba(201,168,76,0.2);display:flex;flex-direction:column;background:rgba(9,22,23,0.6);height:100%;overflow:hidden;}
+.cc-hdr{padding:16px 18px 12px;border-bottom:1px solid rgba(201,168,76,0.2);font-family:'Cinzel',serif;font-size:12px;color:#C9A84C;letter-spacing:.06em;display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.cc-srch{margin:10px 12px;flex-shrink:0;background:rgba(9,22,23,0.5);border:1px solid rgba(201,168,76,0.15);border-radius:7px;padding:7px 12px;display:flex;align-items:center;gap:8px;}
+.cc-srch input{background:none;border:none;outline:none;color:#fff;font-family:'Montserrat',sans-serif;font-size:12px;width:100%;}
+.cc-srch input::placeholder{color:#667a7b;}
+.cl{flex:1;overflow-y:auto;padding:4px 0;}
+.ci{padding:11px 16px;cursor:pointer;display:flex;align-items:center;gap:10px;border-left:3px solid transparent;transition:all .18s;}
+.ci:hover{background:rgba(201,168,76,0.06);}
+.ci-active{background:rgba(201,168,76,0.12)!important;border-left-color:#C9A84C!important;}
+.cav{width:38px;height:38px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:13px;font-weight:600;position:relative;}
+.con::after{content:'';position:absolute;bottom:1px;right:1px;width:9px;height:9px;border-radius:50%;background:#3cb887;border:2px solid #0D2728;}
+.cb{flex:1;min-width:0;}
+.cn{font-size:12px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.cp{font-size:11px;color:#667a7b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px;}
+.cm{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;}
+.ct{font-size:10px;color:#667a7b;}
+.cu{background:#e05252;color:#fff;font-size:9px;font-weight:700;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+.cw{flex:1;display:flex;flex-direction:column;min-width:0;height:100%;overflow:hidden;}
+.ch{padding:14px 24px;border-bottom:1px solid rgba(201,168,76,0.2);display:flex;align-items:center;gap:12px;background:rgba(9,22,23,0.7);flex-shrink:0;}
+.msgs{flex:1;overflow-y:auto;padding:24px 32px;display:flex;flex-direction:column;gap:16px;background:#091617;}
+.div{display:flex;align-items:center;gap:14px;font-size:10px;color:#667a7b;letter-spacing:.12em;text-transform:uppercase;align-self:stretch;}
+.div::before,.div::after{content:'';flex:1;height:1px;background:rgba(201,168,76,0.1);}
+.cia{padding:16px 24px 20px;border-top:1px solid rgba(201,168,76,0.2);background:rgba(9,22,23,0.85);flex-shrink:0;}
+.cib{display:flex;align-items:flex-end;gap:12px;background:rgba(15,49,51,0.7);border:1px solid rgba(201,168,76,0.22);border-radius:12px;padding:12px 16px;transition:border-color .2s;}
+.cib:focus-within{border-color:rgba(201,168,76,0.5);}
+.cib textarea{flex:1;background:none;border:none;outline:none;resize:none;color:#fff;font-family:'Montserrat',sans-serif;font-size:13px;line-height:1.5;max-height:120px;min-height:22px;}
+.cib textarea::placeholder{color:#667a7b;}
+.csb{height:38px;padding:0 18px;border-radius:8px;flex-shrink:0;background:linear-gradient(135deg,#b8912d,#C9A84C);border:none;cursor:pointer;display:flex;align-items:center;gap:7px;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:600;color:#091617;transition:all .2s;box-shadow:0 0 14px rgba(201,168,76,0.3);}
+.csb:hover{box-shadow:0 0 22px rgba(201,168,76,0.55);transform:translateY(-1px);}
+.cd{font-size:10px;color:#667a7b;text-align:center;margin-top:9px;opacity:.5;}
+</style>
+
+<!-- Sidebar overlay (mobile/tablet) -->
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+
+<!-- Mobile bottom nav -->
+<nav class="mob-nav">
+  <div class="mob-nav-item active" id="mob-nav-dashboard" onclick="showView('dashboard');setMobNav('dashboard')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    Priorités
+  </div>
+  <div class="mob-nav-item" id="mob-nav-ingest" onclick="showView('ingest');setMobNav('ingest')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+    Ingestion
+  </div>
+  <div class="mob-nav-item" id="mob-nav-case" onclick="showView('case');setMobNav('case')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+    Affaire
+  </div>
+  <div class="mob-nav-item" id="mob-nav-chat" onclick="showView('chat');setMobNav('chat')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+    <span class="mob-nav-badge" id="mob-badge">2</span>
+    Client
+  </div>
+</nav>
+
+<!-- ESPACE CLIENT CHAT -->
+<div id="view-chat">
+  <!-- Contacts -->
+  <div class="cc">
+    <div class="cc-hdr">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+      Espace Client
+    </div>
+    <div class="cc-srch">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#667a7b" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" placeholder="Rechercher…">
+    </div>
+    <div class="cl">
+      <div class="ci ci-active" data-init="ML" onclick="selectContact(this,'ML')">
+        <div class="cav con" style="background:rgba(74,143,232,0.15);color:#4a8fe8;border:1.5px solid rgba(74,143,232,0.3)">ML</div>
+        <div class="cb"><div class="cn">Maître Laurent</div><div class="cp">Concernant la demande de mise en liberté…</div></div>
+        <div class="cm"><div class="ct">09:14</div><div class="cu">2</div></div>
+      </div>
+      <div class="ci" data-init="JM" onclick="selectContact(this,'JM')">
+        <div class="cav" style="background:rgba(224,82,82,0.12);color:#e05252;border:1.5px solid rgba(224,82,82,0.25)">JM</div>
+        <div class="cb"><div class="cn">Jean-Paul Martin</div><div class="cp">Requête transmise via défenseur</div></div>
+        <div class="cm"><div class="ct">Hier</div></div>
+      </div>
+      <div class="ci" data-init="PF" onclick="selectContact(this,'PF')">
+        <div class="cav con" style="background:rgba(60,184,135,0.12);color:#3cb887;border:1.5px solid rgba(60,184,135,0.3)">PF</div>
+        <div class="cb"><div class="cn">Procureur Fontaine</div><div class="cp">Réquisitions transmises — attente décision</div></div>
+        <div class="cm"><div class="ct">Hier</div></div>
+      </div>
+      <div class="ci" data-init="CC" onclick="selectContact(this,'CC')">
+        <div class="cav" style="background:rgba(224,127,48,0.12);color:#e07f30;border:1.5px solid rgba(224,127,48,0.3)">CC</div>
+        <div class="cb"><div class="cn">Claire Consort</div><div class="cp">Sous contrôle judiciaire · Dernier contact</div></div>
+        <div class="cm"><div class="ct">23/06</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chat window -->
+  <div class="cw">
+    <!-- Header -->
+    <div class="ch">
+      <div class="chat-back-btn" onclick="openChatContacts()" title="Contacts">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      </div>
+      <div id="cha" style="width:40px;height:40px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:14px;font-weight:600;background:rgba(74,143,232,0.15);color:#4a8fe8;border:1.5px solid rgba(74,143,232,0.3)">ML</div>
+      <div>
+        <div id="chn" style="font-size:14px;font-weight:600;color:#fff">Maître Laurent</div>
+        <div style="display:flex;align-items:center;gap:6px;margin-top:2px">
+          <span style="width:7px;height:7px;border-radius:50%;background:#3cb887;display:inline-block;flex-shrink:0"></span>
+          <span id="chr" style="font-size:11px;color:#667a7b">Avocat de la défense · Barreau de Paris · En ligne</span>
+        </div>
+      </div>
+      <div style="margin-left:auto;display:flex;gap:8px">
+        <div onclick="showView('case')" style="width:32px;height:32px;border-radius:7px;background:rgba(255,255,255,0.04);border:1px solid rgba(201,168,76,0.2);display:flex;align-items:center;justify-content:center;color:#A8B2B3;cursor:pointer" title="Dossier lié">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Messages -->
+    <div class="msgs" id="chat-messages">
+      <div class="div">Mercredi 25 Juin 2026</div>
+
+      <div style="display:flex;align-items:flex-end;gap:10px;align-self:flex-start;max-width:62%">
+        <div style="width:32px;height:32px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:11px;font-weight:600;background:rgba(74,143,232,0.15);color:#4a8fe8;border:1.5px solid rgba(74,143,232,0.3)">ML</div>
+        <div style="display:flex;flex-direction:column;gap:3px">
+          <div style="font-size:10px;color:#667a7b;padding:0 4px">Maître Laurent</div>
+          <div style="padding:12px 16px;font-size:13px;line-height:1.65;color:#fff;background:rgba(13,45,47,0.9);border:1px solid rgba(201,168,76,0.13);border-radius:4px 16px 16px 16px">Monsieur le Président, je me permets de vous contacter au sujet de l'Affaire N°8492. Mon client est en détention provisoire depuis 138 jours. La demande de mise en liberté déposée hier a-t-elle bien été enregistrée ?</div>
+          <div style="font-size:10px;color:#667a7b;padding:0 4px">14h22</div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:row-reverse;align-items:flex-end;gap:10px;align-self:flex-end;max-width:62%">
+        <div style="width:32px;height:32px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:11px;font-weight:600;background:rgba(201,168,76,0.15);color:#C9A84C">PL</div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px">
+          <div style="font-size:10px;color:rgba(201,168,76,0.6);text-align:right;padding:0 4px">Président Lecomte</div>
+          <div style="padding:12px 16px;font-size:13px;line-height:1.65;color:#fff;background:linear-gradient(135deg,rgba(180,130,40,0.22),rgba(201,168,76,0.16));border:1px solid rgba(201,168,76,0.28);border-radius:16px 4px 16px 16px">Maître Laurent, votre demande a bien été réceptionnée ce jour à 11h47. Elle est en cours d'examen. L'IA Case Mind a identifié une contradiction significative entre les dépositions des Témoins A et B concernant la remise des fonds — cet élément influera sur ma décision.</div>
+          <div style="font-size:10px;color:#667a7b;text-align:right;padding:0 4px">15h03</div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:flex-end;gap:10px;align-self:flex-start;max-width:62%">
+        <div style="width:32px;height:32px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:11px;font-weight:600;background:rgba(74,143,232,0.15);color:#4a8fe8;border:1.5px solid rgba(74,143,232,0.3)">ML</div>
+        <div style="display:flex;flex-direction:column;gap:3px">
+          <div style="font-size:10px;color:#667a7b;padding:0 4px">Maître Laurent</div>
+          <div style="padding:12px 16px;font-size:13px;line-height:1.65;color:#fff;background:rgba(13,45,47,0.9);border:1px solid rgba(201,168,76,0.13);border-radius:4px 16px 16px 16px">Puis-je solliciter une audition en urgence afin de présenter nos observations sur cette contradiction ? Mon client est dans une situation de fragilité manifeste.</div>
+          <div style="font-size:10px;color:#667a7b;padding:0 4px">15h29</div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:row-reverse;align-items:flex-end;gap:10px;align-self:flex-end;max-width:62%">
+        <div style="width:32px;height:32px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:11px;font-weight:600;background:rgba(201,168,76,0.15);color:#C9A84C">PL</div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px">
+          <div style="font-size:10px;color:rgba(201,168,76,0.6);text-align:right;padding:0 4px">Président Lecomte</div>
+          <div style="padding:12px 16px;font-size:13px;line-height:1.65;color:#fff;background:linear-gradient(135deg,rgba(180,130,40,0.22),rgba(201,168,76,0.16));border:1px solid rgba(201,168,76,0.28);border-radius:16px 4px 16px 16px">Votre demande est recevable. Audience fixée le 27 juin 2026 à 10h00, salle 14A. Confrontation des deux témoins prévue (Art. 102 CPP). Observations écrites requises avant le 26/06 à 17h00.</div>
+          <div style="font-size:10px;color:#667a7b;text-align:right;padding:0 4px">16h51</div>
+        </div>
+      </div>
+
+      <div class="div">Aujourd'hui — 26 Juin 2026</div>
+
+      <div style="display:flex;align-items:flex-end;gap:10px;align-self:flex-start;max-width:62%">
+        <div style="width:32px;height:32px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:11px;font-weight:600;background:rgba(74,143,232,0.15);color:#4a8fe8;border:1.5px solid rgba(74,143,232,0.3)">ML</div>
+        <div style="display:flex;flex-direction:column;gap:3px">
+          <div style="font-size:10px;color:#667a7b;padding:0 4px">Maître Laurent</div>
+          <div style="padding:12px 16px;font-size:13px;line-height:1.65;color:#fff;background:rgba(13,45,47,0.9);border:1px solid rgba(201,168,76,0.13);border-radius:4px 16px 16px 16px">Monsieur le Président, nos observations écrites viennent d'être transmises. Nous demandons formellement une contre-expertise sur le montant des fonds — l'écart entre les témoins (30 000 € vs 50 000 €) remet en cause la qualification d'escroquerie en bande organisée.<br><br><span style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;background:rgba(224,82,82,0.1);color:#e05252;border:1px solid rgba(224,82,82,0.25);font-size:10px;font-weight:600">⚠ Requête formelle transmise</span></div>
+          <div style="font-size:10px;color:#667a7b;padding:0 4px">09:07</div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:flex-end;gap:10px;align-self:flex-start;max-width:62%">
+        <div style="width:32px;height:32px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:11px;font-weight:600;background:rgba(74,143,232,0.15);color:#4a8fe8;border:1.5px solid rgba(74,143,232,0.3)">ML</div>
+        <div style="display:flex;flex-direction:column;gap:3px">
+          <div style="font-size:10px;color:#667a7b;padding:0 4px">Maître Laurent</div>
+          <div style="padding:12px 16px;font-size:13px;line-height:1.65;color:#fff;background:rgba(13,45,47,0.9);border:1px solid rgba(201,168,76,0.13);border-radius:4px 16px 16px 16px">Confirmez-vous la tenue de l'audience demain à 10h00 ?</div>
+          <div style="font-size:10px;color:#667a7b;padding:0 4px">09:14</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Input -->
+    <div class="cia">
+      <div class="cib">
+        <textarea id="chat-textarea" rows="1" placeholder="Répondre à Maître Laurent…" onkeydown="chatKey(event)" oninput="chatResize(this)"></textarea>
+        <button class="csb" onclick="sendMsg()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          Envoyer
+        </button>
+      </div>
+      <div class="cd">Échanges enregistrés conformément aux exigences du greffe · Case Mind · TGI Paris</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
